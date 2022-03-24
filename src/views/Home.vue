@@ -1,5 +1,5 @@
 <template>
-  <div class= "container" ref="container"></div>
+  <div class="container" ref="container"></div>
 </template>
 
 <script lang="ts">
@@ -81,9 +81,9 @@ export default defineComponent({
       renderer.setSize(width, height);
       (container.value as HTMLElement).appendChild(renderer.domElement);
       (container.value as HTMLElement).appendChild(stats.dom);
-      stats.domElement.style.top = 'auto';
-      stats.domElement.style.right = '0px';
-			stats.domElement.style.bottom = '0px';
+      stats.domElement.style.top = '20px';
+      stats.domElement.style.right = '20px';
+      stats.domElement.style.left = 'auto';
 
       window.addEventListener('resize', onWindowResize);
     };
@@ -110,11 +110,10 @@ export default defineComponent({
       init();
       animate();
     });
-		return {
-			container
-		}
+    return {
+      container
+    };
   }
 });
 </script>
-<style lang="scss">
-</style>
+<style lang="scss"></style>

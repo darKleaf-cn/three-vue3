@@ -2,7 +2,7 @@ import { createRouter, createWebHashHistory, RouteRecordRaw } from 'vue-router';
 
 import Layout from '@/components/layout/Index.vue';
 const Home = () => import('../views/Home.vue');
-const MiscAnimationGroups = () => import('../views/official/miscAnimationGroups/Index.vue');
+const MiscAnimationGroups = () => import('../views/official/miscAnimationGroups/MiscAnimationGroups.vue');
 const MiscAnimationKeys = () => import('../views/official/miscAnimationKeys/Index.vue');
 const MiscBoxselection = () => import('../views/official/miscBoxselection/Index.vue');
 const MiscControlsArcball = () => import('../views/official/miscControlsArcball/Index.vue');
