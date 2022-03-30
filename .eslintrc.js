@@ -19,6 +19,7 @@ module.exports = {
     'eol-last': 'off',
     'space-before-function-paren': 'off',
     'no-tabs': 'off',
-    'indent': 'off'
+    'indent': 'off',
+		"@typescript-eslint/no-this-alias": ["off"]
   }
 };
