@@ -5,9 +5,6 @@
         :default-active="$route.path"
         router
         unique-opened
-        class="el-menu-vertical-demo"
-        active-text-color="#ffd04b"
-        background-color="#545c64"
       >
         <template v-for="item in navRouter" :key="item.name">
           <el-sub-menu v-if="item.children && !(item.meta ? item.meta.isSingle : false)" :index="item.path">
@@ -47,7 +44,7 @@ export default defineComponent({
 </script>
 
 <style lang="scss">
-.el-aside {
-  border-right: 0.5px solid #545c64;
-}
+// .el-aside {
+//   border-right: 0.5px solid #545c64;
+// }
 </style>

@@ -2,11 +2,13 @@ import { createRouter, createWebHashHistory, RouteRecordRaw } from 'vue-router';
 
 import Layout from '@/components/layout/Index.vue';
 const Home = () => import('../views/Home.vue');
-const MiscAnimationGroups = () => import('../views/official/miscAnimationGroups/MiscAnimationGroups.vue');
-const MiscAnimationKeys = () => import('../views/official/miscAnimationKeys/MiscAnimationKeys.vue');
-const MiscBoxselection = () => import('../views/official/miscBoxselection/MiscBoxselection.vue');
-const MiscControlsArcball = () => import('../views/official/miscControlsArcball/MiscControlsArcball.vue');
-const MiscControlsDrag = () => import('../views/official/miscControlsDrag/MiscControlsDrag.vue')
+const MiscAnimationGroups = () => import('../views/misc/aimation/groups/Index.vue');
+const MiscAnimationKeys = () => import('../views/misc/aimation/keys/Index.vue');
+const MiscBoxselection = () => import('../views/misc/boxselection/Index.vue');
+const MiscControlsArcball = () => import('../views/misc/controls/arcball/Index.vue');
+const MiscControlsDrag = () => import('../views/misc/controls/drag/Index.vue');
+const MisControlsMap = () => import('../views/misc/controls/map/Index.vue');
+const MisControlsOrbit = () => import('../views/misc/controls/orbit/Index.vue');
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -31,34 +33,44 @@ const routes: Array<RouteRecordRaw> = [
     ]
   },
   {
-    path: '/official',
+    path: '/misc',
     component: Layout,
-    name: '官方实例',
+    name: 'misc',
     children: [
       {
-        path: 'miscAnimationGroups',
-        name: 'miscAnimationGroups',
+        path: 'animation/groups',
+        name: 'animation/groups',
         component: MiscAnimationGroups
       },
       {
-        path: 'miscAnimationKeys',
-        name: 'miscAnimationKeys',
+        path: 'animation/keys',
+        name: 'animation/keys',
         component: MiscAnimationKeys
       },
       {
-        path: 'miscBoxselection',
-        name: 'miscBoxselection',
+        path: 'boxselection',
+        name: 'boxselection',
         component: MiscBoxselection
       },
       {
-        path: 'miscControlsArcball',
-        name: 'miscControlsArcball',
+        path: 'controls/arcball',
+        name: 'controls/arcball',
         component: MiscControlsArcball
       },
-			{
-        path: 'miscControlsDrag',
-        name: 'miscControlsDrag',
+      {
+        path: 'controls/drag',
+        name: 'controls/drag',
         component: MiscControlsDrag
+      },
+      {
+        path: 'controls/map',
+        name: 'controls/map',
+        component: MisControlsMap
+      },
+			{
+        path: 'controls/orbit',
+        name: 'controls/orbit',
+        component: MisControlsOrbit
       }
     ]
   }

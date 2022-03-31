@@ -14,10 +14,10 @@ export default defineComponent({
       const offsetX = -240;
       const offsetY = -40;
       three = new Three(container.value as HTMLElement, offsetX, offsetY);
-      three.animate();
+      three.start();
     });
 		onBeforeUnmount(() => {
-			three.destroy();
+			three.end();
 		})
     return {
       container
