@@ -9,6 +9,9 @@ const MiscControlsArcball = () => import('../views/misc/controls/arcball/Index.v
 const MiscControlsDrag = () => import('../views/misc/controls/drag/Index.vue');
 const MisControlsMap = () => import('../views/misc/controls/map/Index.vue');
 const MisControlsOrbit = () => import('../views/misc/controls/orbit/Index.vue');
+const MisControlsPointerLock = () => import('../views/misc/controls/pointerLock/Index.vue');
+const MisControlsTrackball = () => import('../views/misc/controls/trackball/Index.vue');
+const MisControlsTransform = () => import('../views/misc/controls/transform/Index.vue');
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -33,47 +36,78 @@ const routes: Array<RouteRecordRaw> = [
     ]
   },
   {
-    path: '/misc',
+    path: '/misc/animation',
     component: Layout,
-    name: 'misc',
+    name: 'misc/animation',
     children: [
       {
-        path: 'animation/groups',
-        name: 'animation/groups',
+        path: 'groups',
+        name: 'groups',
         component: MiscAnimationGroups
       },
       {
-        path: 'animation/keys',
-        name: 'animation/keys',
+        path: 'keys',
+        name: 'keys',
         component: MiscAnimationKeys
-      },
+      }
+		]
+	},
+	{
+    path: '/misc/boxselection',
+    component: Layout,
+    name: 'misc/boxselection',
+		meta: {
+      isSingle: true
+    },
+    children: [
       {
-        path: 'boxselection',
-        name: 'boxselection',
+        path: '',
         component: MiscBoxselection
-      },
+      }
+		]
+	},
+	{
+    path: '/misc/controls',
+    component: Layout,
+    name: 'misc/controls',
+    children: [
       {
-        path: 'controls/arcball',
-        name: 'controls/arcball',
+        path: 'arcball',
+        name: 'arcball',
         component: MiscControlsArcball
       },
       {
-        path: 'controls/drag',
-        name: 'controls/drag',
+        path: 'drag',
+        name: 'drag',
         component: MiscControlsDrag
       },
       {
-        path: 'controls/map',
-        name: 'controls/map',
+        path: 'map',
+        name: 'map',
         component: MisControlsMap
       },
-			{
-        path: 'controls/orbit',
-        name: 'controls/orbit',
+      {
+        path: 'orbit',
+        name: 'orbit',
         component: MisControlsOrbit
+      },
+      {
+        path: 'pointerLock',
+        name: 'pointerLock',
+        component: MisControlsPointerLock
+      },
+      {
+        path: 'trackball',
+        name: 'trackball',
+        component: MisControlsTrackball
+      },
+      {
+        path: 'transfrom',
+        name: 'transfrom',
+				component: MisControlsTransform
       }
-    ]
-  }
+		]
+	}
 ];
 
 const router = createRouter({

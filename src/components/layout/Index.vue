@@ -35,7 +35,6 @@ export default defineComponent({
     const navRouter = useRouter().options.routes.filter((router) => {
       return router.meta ? !router.meta.hidden : true;
     });
-    console.log(navRouter);
     return {
       navRouter
     };
