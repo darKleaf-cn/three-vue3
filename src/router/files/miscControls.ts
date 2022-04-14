@@ -1,8 +1,9 @@
 import { RouteRecordRaw } from 'vue-router';
 import Layout from '@/components/layout/Index.vue';
+import Official from '@/views/Official.vue';
 
 export default [
-	{
+  {
     path: '/misc/controls',
     component: Layout,
     name: 'misc/controls',
@@ -10,37 +11,37 @@ export default [
       {
         path: 'arcball',
         name: 'arcball',
-        component: () => import('@/views/misc/controls/arcball/Index.vue')
+        component: Official
       },
       {
         path: 'drag',
         name: 'drag',
-        component: () => import('@/views/misc/controls/drag/Index.vue')
+        component: Official
       },
       {
         path: 'map',
         name: 'map',
-        component: () => import('@/views/misc/controls/map/Index.vue')
+        component: Official
       },
       {
         path: 'orbit',
         name: 'orbit',
-        component: () => import('@/views/misc/controls/orbit/Index.vue')
+        component: Official
       },
       {
         path: 'pointerLock',
         name: 'pointerLock',
-        component: () => import('@/views/misc/controls/pointerLock/Index.vue')
+        component: Official
       },
       {
         path: 'trackball',
         name: 'trackball',
-        component: () => import('@/views/misc/controls/trackball/Index.vue')
+        component: Official
       },
       {
-        path: 'transfrom',
-        name: 'transfrom',
-        component: () => import('@/views/misc/controls/transform/Index.vue')
+        path: 'transform',
+        name: 'transform',
+        component: Official
       }
     ]
   }

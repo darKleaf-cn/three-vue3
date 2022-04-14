@@ -12,7 +12,7 @@ interface ArcballGui {
 class Three {
   private scene: THREE.Scene;
   private camera: THREE.PerspectiveCamera | null = null;
-  private renderer: THREE.WebGLRenderer | null = null;
+  private renderer!: THREE.WebGLRenderer;
   private container: HTMLElement;
   private offsetX: number;
   private offsetY: number;
@@ -20,7 +20,7 @@ class Three {
   private arcballGui: ArcballGui | null = null;
   private folderOptions: GUI | null = null;
   private folderAnimations: GUI | null = null;
-  private gui: GUI | null = null;
+  private gui!: GUI;
   constructor(container: HTMLElement, offsetX: number, offsetY: number) {
     this.offsetX = offsetX;
     this.offsetY = offsetY;
@@ -36,7 +36,8 @@ class Three {
     this.setGui();
     this.setModel();
     // this.setGui();
-    window.addEventListener('resize', this.onWindowResize.bind(this));
+    this.onWindowResize = this.onWindowResize.bind(this);
+    window.addEventListener('resize', this.onWindowResize);
   }
 
   private setCamera(): void {
@@ -160,7 +161,7 @@ class Three {
     this.container.appendChild(this.renderer.domElement);
   }
 
-  public animate(): void {
+  public start(): void {
     this.render();
   }
 
@@ -170,17 +171,19 @@ class Three {
     }
   };
 
+	public end(): void {
+    window.removeEventListener('resize', this.onWindowResize);
+		this.renderer.dispose();
+		this.renderer.forceContextLoss();
+		this.gui.destroy();
+		this.container.removeChild(this.renderer.domElement);
+  }
+
   private onWindowResize(): void {
     if (this.camera && this.renderer) {
       this.camera.aspect = (window.innerWidth + this.offsetX) / (window.innerHeight + this.offsetY);
       this.camera.updateProjectionMatrix();
       this.renderer.setSize(window.innerWidth + this.offsetX, window.innerHeight + this.offsetY);
-    }
-  }
-
-  public destroy(): void {
-    if (this.gui) {
-			this.gui.destroy();
     }
   }
 }

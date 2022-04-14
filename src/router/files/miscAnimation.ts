@@ -1,5 +1,6 @@
 import { RouteRecordRaw } from 'vue-router';
 import Layout from '@/components/layout/Index.vue';
+import Official from '@/views/Official.vue';
 
 export default [
 	{
@@ -10,12 +11,12 @@ export default [
       {
         path: 'groups',
         name: 'groups',
-        component: () => import('@/views/misc/aimation/groups/Index.vue')
+        component: Official
       },
       {
         path: 'keys',
         name: 'keys',
-        component: () => import('@/views/misc/aimation/keys/Index.vue')
+        component: Official
       }
     ]
   }

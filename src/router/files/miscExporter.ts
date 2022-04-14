@@ -1,5 +1,6 @@
 import { RouteRecordRaw } from 'vue-router';
 import Layout from '@/components/layout/Index.vue';
+import Official from '@/views/Official.vue';
 
 export default [
 	{
@@ -10,7 +11,7 @@ export default [
       {
         path: 'collada',
         name: 'collada',
-        component: () => import('@/views/misc/exporter/collada/Index.vue')
+        component: Official
       }
     ]
   }

@@ -5,9 +5,9 @@ import { SelectionHelper } from 'three/examples/jsm/interactive/SelectionHelper'
 class Three {
   scene: THREE.Scene;
   camera: THREE.PerspectiveCamera | null = null;
-  renderer: THREE.WebGLRenderer | null = null;
+  renderer!: THREE.WebGLRenderer;
   mixer: THREE.AnimationMixer | null = null;
-  stats: Stats | null = null;
+  stats!: Stats;
   clock: THREE.Clock;
   container: HTMLElement;
   offsetX: number;
@@ -30,7 +30,9 @@ class Three {
     this.setRenderer();
     this.setStats();
 		this.setSelection();
-    window.addEventListener('resize', this.onWindowResize.bind(this));
+		
+		this.onWindowResize = this.onWindowResize.bind(this);
+    window.addEventListener('resize', this.onWindowResize);
   }
 
   setCamera(): void {
@@ -135,9 +137,18 @@ class Three {
     }
   }
 
-  animate(): void {
-    requestAnimationFrame(this.animate.bind(this));
+  start(): void {
+    requestAnimationFrame(this.start.bind(this));
     this.render();
+  }
+
+	public end(): void {
+    window.removeEventListener('resize', this.onWindowResize);
+		this.renderer.dispose();
+		this.renderer.forceContextLoss();
+		this.stats.end();
+		this.container.removeChild(this.stats.domElement);
+		this.container.removeChild(this.renderer.domElement);
   }
 
   render(): void {

@@ -3,13 +3,14 @@ import Stats from 'three/examples/jsm/libs/stats.module';
 class Three {
   scene: THREE.Scene;
   camera: THREE.PerspectiveCamera | null = null;
-  renderer: THREE.WebGLRenderer | null = null;
+  renderer!: THREE.WebGLRenderer;
   mixer: THREE.AnimationMixer | null = null;
-  stats: Stats | null = null;
+  stats!: Stats;
   clock: THREE.Clock;
   container: HTMLElement;
   offsetX: number;
   offsetY: number;
+  frameId!: number;
 
   constructor(container: HTMLElement, offsetX: number, offsetY: number) {
     this.offsetX = offsetX;
@@ -25,7 +26,10 @@ class Three {
     this.setMixer();
     this.setRenderer();
     this.setStats();
-    window.addEventListener('resize', this.onWindowResize.bind(this));
+
+    // 添加事件
+    this.onWindowResize = this.onWindowResize.bind(this);
+    window.addEventListener('resize', this.onWindowResize);
   }
 
   setCamera(): void {
@@ -106,10 +110,10 @@ class Three {
     this.container.appendChild(this.stats.dom);
   }
 
-  animate(): void {
-    requestAnimationFrame(this.animate.bind(this));
+  start = (): void => {
+    this.frameId = requestAnimationFrame(this.start);
     this.render();
-  }
+  };
 
   render(): void {
     const delta = this.clock.getDelta();
@@ -128,6 +132,50 @@ class Three {
       this.camera.updateProjectionMatrix();
       this.renderer.setSize(window.innerWidth + this.offsetX, window.innerHeight + this.offsetY);
     }
+  }
+
+  public end(): void {
+    // if (this.renderer) {
+    //   window.removeEventListener('resize', this.onWindowResize);
+    //   this.renderer.dispose();
+    //   this.renderer.forceContextLoss();
+    //   this.stats.end();
+    //   this.container.removeChild(this.stats.domElement);
+    //   this.container.removeChild(this.renderer.domElement);
+    // 	this.renderer = null;
+    // }
+    // function disposeChild(mesh: THREE.Object3D) {
+    //   if (mesh instanceof THREE.Mesh) {
+		// 		console.log(mesh)
+    //     if (mesh.geometry?.dispose) {
+    //       mesh.geometry.dispose();
+    //     }
+    //     if (mesh.material?.dispose) {
+    //       mesh.material.dispose();
+    //     }
+    //     if (mesh.material?.texture?.dispose) {
+    //       mesh.material.texture.dispose();
+    //     }
+    //   }
+    //   if (mesh instanceof THREE.Group) {
+    //     mesh.clear();
+    //   }
+    //   if (mesh instanceof THREE.Object3D) {
+    //     mesh.clear();
+    //   }
+    // }
+    cancelAnimationFrame(this.frameId);
+
+    // this.scene.traverse((item) => {
+    //   disposeChild(item);
+    // });
+    THREE.Cache.clear();
+    this.scene.clear();
+    this.renderer.dispose();
+    this.renderer.forceContextLoss();
+		this.stats.end();
+		this.container.removeChild(this.stats.domElement);
+		this.container.removeChild(this.renderer.domElement);
   }
 }
 export default Three;

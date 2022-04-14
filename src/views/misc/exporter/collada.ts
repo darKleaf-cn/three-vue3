@@ -100,6 +100,8 @@ class Three {
 
   public end(): void {
     window.removeEventListener('resize', this.onWindowResize);
+
+		this.container.removeChild(this.renderer.domElement);
   }
 }
 

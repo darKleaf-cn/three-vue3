@@ -1,5 +1,6 @@
 import { RouteRecordRaw } from 'vue-router';
 import Layout from '@/components/layout/Index.vue';
+import Official from '@/views/Official.vue';
 
 export default [
 	{
@@ -10,7 +11,12 @@ export default [
       {
         path: 'keyframes',
         name: 'keyframes',
-        component: () => import('@/views/webgl/animation/keyframes/Index.vue')
+        component: Official
+      },
+			{
+        path: 'multiple',
+        name: 'multiple',
+        component: Official
       }
     ]
   }

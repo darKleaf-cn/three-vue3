@@ -171,6 +171,12 @@ class Three {
 
   public end(): void {
     window.removeEventListener('resize', this.onWindowResize);
+    document.removeEventListener('keydown', this.onKeyDown);
+    document.removeEventListener('keyup', this.onKeyUp);
+		this.renderer.dispose();
+		this.renderer.forceContextLoss();
+
+		this.container.removeChild(this.renderer.domElement);
   }
 }
 export default Three;

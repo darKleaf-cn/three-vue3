@@ -3,9 +3,10 @@ import Stats from 'three/examples/jsm/libs/stats.module';
 class Three {
   scene: THREE.Scene;
   camera: THREE.PerspectiveCamera | null = null;
-  renderer: THREE.WebGLRenderer | null = null;
-  mixer: THREE.AnimationMixer | null = null;
-  stats: Stats | null = null;
+  renderer!: THREE.WebGLRenderer;
+  mixer!: THREE.AnimationMixer;
+  stats!: Stats;
+  frameId!: number;
   clock: THREE.Clock;
   container: HTMLElement;
   offsetX: number;
@@ -25,7 +26,10 @@ class Three {
     this.setMixer();
     this.setRenderer();
     this.setStats();
-    window.addEventListener('resize', this.onWindowResize.bind(this));
+
+    // 添加事件
+    this.onWindowResize = this.onWindowResize.bind(this);
+    window.addEventListener('resize', this.onWindowResize);
   }
 
   setCamera(): void {
@@ -107,9 +111,47 @@ class Three {
     this.container.appendChild(this.stats.dom);
   }
 
-  animate(): void {
-    requestAnimationFrame(this.animate.bind(this));
+  public start(): void {
+    this.frameId = requestAnimationFrame(this.start.bind(this));
     this.render();
+  }
+
+  public end(): void {
+    cancelAnimationFrame(this.frameId);
+
+    // this.scene.traverse((item) => {
+    //   disposeChild(item);
+    // });
+		this.mixer.uncacheRoot(this.scene);
+    this.scene.children.forEach((mesh: THREE.Object3D) => {
+			// console.log(mesh);
+      if (mesh instanceof THREE.Mesh) {
+        console.log(mesh);
+        if (mesh.geometry) {
+          mesh.geometry.dispose();
+        }
+        if (mesh.material) {
+          mesh.material.dispose();
+        }
+        if (mesh.material.texture) {
+          mesh.material.texture.dispose();
+        }
+      }
+      if (mesh instanceof THREE.Group) {
+        mesh.clear();
+      }
+      if (mesh instanceof THREE.Object3D) {
+        mesh.clear();
+      }
+    });
+    THREE.Cache.clear();
+    this.scene.clear();
+    this.renderer.dispose();
+    this.renderer.forceContextLoss();
+    this.stats.end();
+    this.container.removeChild(this.stats.domElement);
+    this.container.removeChild(this.renderer.domElement);
+		// console.log(this.renderer.info)
   }
 
   render(): void {

@@ -27,10 +27,15 @@ class Three {
     this.setControls();
 
     // 添加事件
-    window.addEventListener('resize', this.onWindowResize.bind(this));
-    document.addEventListener('click', this.onClick.bind(this));
-    window.addEventListener('keydown', this.onKeyDown.bind(this));
-    window.addEventListener('keyup', this.onKeyUp.bind(this));
+		this.onWindowResize = this.onWindowResize.bind(this);
+		this.onKeyDown = this.onKeyDown.bind(this);
+		this.onKeyUp = this.onKeyUp.bind(this);
+		this.onClick = this.onClick.bind(this);
+
+    window.addEventListener('resize', this.onWindowResize);
+    document.addEventListener('keydown', this.onKeyDown);
+    document.addEventListener('keyup', this.onKeyUp);
+    document.addEventListener('click', this.onClick);
   }
 
   private setScene(): void {
@@ -171,7 +176,15 @@ class Three {
   }
 
   public end(): void {
-    window.removeEventListener('resize', this.onWindowResize.bind(this));
+    window.removeEventListener('resize', this.onWindowResize);
+    document.removeEventListener('keydown', this.onKeyDown);
+    document.removeEventListener('keyup', this.onKeyUp);
+    document.removeEventListener('click', this.onClick);
+
+		this.renderer.dispose();
+		this.renderer.forceContextLoss();
+
+		this.container.removeChild(this.renderer.domElement);
   }
 }
 export default Three;

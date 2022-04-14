@@ -1,11 +1,11 @@
 import * as THREE from 'three';
-import { MapControls } from 'three/examples/jsm/controls/OrbitControls';
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 
 class Three {
   private scene!: THREE.Scene;
   private camera!: THREE.PerspectiveCamera;
   private renderer!: THREE.WebGLRenderer;
-  private controls!: MapControls;
+  private controls!: OrbitControls;
   private container: HTMLElement;
   private offsetX: number;
   private offsetY: number;
@@ -24,7 +24,9 @@ class Three {
     this.setControls();
 
     // 添加事件
-    window.addEventListener('resize', this.onWindowResize.bind(this));
+    this.onWindowResize = this.onWindowResize.bind(this);
+
+    window.addEventListener('resize', this.onWindowResize);
   }
 
   private setScene(): void {
@@ -50,7 +52,7 @@ class Three {
 
     const dirLight2 = new THREE.DirectionalLight(0x002288);
     dirLight2.position.set(-1, -1, -1);
-		this.scene.add(dirLight2)
+    this.scene.add(dirLight2);
 
     const ambientLight = new THREE.AmbientLight(0x222222);
     this.scene.add(ambientLight);
@@ -64,8 +66,7 @@ class Three {
   }
 
   private setMesh(): void {
-    const geometry = new THREE.BoxGeometry(1, 1, 1);
-    geometry.translate(0, 0.5, 0);
+    const geometry = new THREE.CylinderGeometry(0, 10, 30, 4, 1);
     const material = new THREE.MeshPhongMaterial({
       color: 0xffffff,
       flatShading: true
@@ -76,9 +77,6 @@ class Three {
       mesh.position.x = Math.random() * 1600 - 800;
       mesh.position.y = 0;
       mesh.position.z = Math.random() * 1600 - 800;
-      mesh.scale.x = 20;
-      mesh.scale.y = Math.random() * 80 + 10;
-      mesh.scale.z = 20;
       mesh.updateMatrix();
       mesh.matrixAutoUpdate = false;
 
@@ -87,7 +85,8 @@ class Three {
   }
 
   private setControls(): void {
-    this.controls = new MapControls(this.camera, this.renderer.domElement);
+    this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+    this.controls.listenToKeyEvents(this.container);
     this.controls.enableDamping = true;
     this.controls.dampingFactor = 0.05;
     this.controls.screenSpacePanning = false;
@@ -107,14 +106,42 @@ class Three {
     this.render();
   }
 
-  public start = ():void => {
+  public start = (): void => {
     requestAnimationFrame(this.start);
     this.controls.update();
     this.render();
   };
 
   public end(): void {
-    window.removeEventListener('resize', this.onWindowResize.bind(this));
+    window.removeEventListener('resize', this.onWindowResize);
+    const arr = this.scene.children.filter((x) => x);
+    arr.forEach((mesh: THREE.Object3D) => {
+      // console.log(mesh);
+      if (mesh instanceof THREE.Mesh) {
+        if (mesh.geometry) {
+          mesh.geometry.dispose();
+					mesh.geometry.clearGroups();
+        }
+        if (mesh.material) {
+          mesh.material.dispose();
+        }
+        if (mesh.material.texture) {
+          mesh.material.texture.dispose();
+        }
+      }
+      if (mesh instanceof THREE.Group) {
+        mesh.clear();
+      }
+      if (mesh instanceof THREE.Object3D) {
+        mesh.clear();
+      }
+    });
+
+    this.controls.dispose();
+    this.scene.clear();
+    this.renderer.dispose();
+    this.renderer.forceContextLoss();
+    this.container.removeChild(this.renderer.domElement);
   }
 }
 export default Three;

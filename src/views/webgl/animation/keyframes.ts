@@ -29,7 +29,9 @@ class Three {
     this.setLoader();
 
     // 添加事件
-    window.addEventListener('resize', this.onWindowResize.bind(this));
+    this.onWindowResize = this.onWindowResize.bind(this);
+
+    window.addEventListener('resize', this.onWindowResize);
   }
 
   private setScene(): void {
@@ -108,7 +110,34 @@ class Three {
   };
 
   public end(): void {
-    window.removeEventListener('resize', this.onWindowResize.bind(this));
+    window.removeEventListener('resize', this.onWindowResize);
+    const arr = this.scene.children.filter((x) => x);
+    arr.forEach((mesh: THREE.Object3D) => {
+      if (mesh instanceof THREE.Mesh) {
+        if (mesh.geometry) {
+          mesh.geometry.dispose();
+        }
+        if (mesh.material) {
+          mesh.material.dispose();
+        }
+        if (mesh.material.texture) {
+          mesh.material.texture.dispose();
+        }
+      }
+      if (mesh instanceof THREE.Group) {
+        mesh.clear();
+      }
+      if (mesh instanceof THREE.Object3D) {
+        mesh.clear();
+      }
+    });
+
+    THREE.Cache.clear();
+    this.controls.dispose();
+    this.scene.clear();
+    this.renderer.dispose();
+    this.renderer.forceContextLoss();
+    this.container.removeChild(this.renderer.domElement);
   }
 }
 export default Three;

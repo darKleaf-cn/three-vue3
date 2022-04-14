@@ -246,6 +246,10 @@ class Three {
     document.removeEventListener('keydown', this.onKeyDown);
     document.removeEventListener('keyup', this.onKeyUp);
     document.removeEventListener('click', this.onClick);
+		this.renderer.dispose();
+		this.renderer.forceContextLoss();
+
+		this.container.removeChild(this.renderer.domElement);
   }
 }
 export default Three;
