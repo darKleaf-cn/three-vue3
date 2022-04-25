@@ -17,7 +17,12 @@ export default [
         path: 'multiple',
         name: 'multiple',
         component: Official
-      }
+      },
+			{
+				path: 'skinningAdditiveBlending',
+        name: 'skinningAdditiveBlending',
+        component: Official
+			}
     ]
   }
 ] as Array<RouteRecordRaw>;

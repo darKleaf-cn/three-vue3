@@ -1,14 +1,80 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
-import * as SkeletonUtils from 'three/examples/jsm/utils/SkeletonUtils';
+// import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+// import GUI from 'lil-gui';
+
+interface Actions {
+  [index: string]: {
+    weight: number;
+    action?: THREE.AnimationAction;
+  };
+}
+
+// interface Settings {
+//   [index: string]: number | (() => void);
+// }
+const baseActions: Actions = {
+  idle: { weight: 1 },
+  walk: { weight: 0 },
+  run: { weight: 0 }
+};
+
+const additiveActions: Actions = {
+  sneak_pose: { weight: 0 },
+  sad_pose: { weight: 0 },
+  agree: { weight: 0 },
+  headShake: { weight: 0 }
+};
+
+function activateAction(action: THREE.AnimationAction): void {
+  const clip = action.getClip();
+  const settings = baseActions[clip.name] || additiveActions[clip.name];
+  setWeight(action, settings.weight);
+  action.play();
+}
+
+function setWeight(action: THREE.AnimationAction, weight: number): void {
+  action.enabled = true;
+  action.setEffectiveTimeScale(1);
+  action.setEffectiveWeight(weight);
+}
+
+// const currentBaseAction = 'idle';
+
+function createPanel(): void {
+  // const panel = new GUI({
+  //   width: 310
+  // });
+
+  // // const folder1 = panel.addFolder('Base Actions');
+  // // const folder2 = panel.addFolder('Additive Action Weights');
+  // // const folder3 = panel.addFolder('General Speed');
+
+  // const panelSetting: Settings = {
+  //   'modify time scale': 1.0
+  // };
+  // const baseNames = ['None', ...Object.keys(baseActions)];
+
+  // for (let i = 0, l = baseNames.length; i !== l; i++) {
+  //   const name = baseNames[i];
+  //   const settings = baseActions[name];
+  //   panelSetting[name] = function () {
+  //     const currentSettings = baseActions[currentBaseAction];
+  //     const currentAction = currentSettings ? currentSettings.action : null;
+  //     const action = settings ? settings.action : null;
+  //   };
+  // }
+}
 
 class Three {
   private scene!: THREE.Scene;
   private camera!: THREE.PerspectiveCamera;
   private renderer!: THREE.WebGLRenderer;
   private clock: THREE.Clock;
-  private mixers: Array<THREE.AnimationMixer> = [];
+  private mixer!: THREE.AnimationMixer;
+  private allActions: Array<THREE.AnimationAction> = [];
   private container: HTMLElement;
+  private numAnimations = 0;
   private offsetX: number;
   private offsetY: number;
   constructor(container: HTMLElement, offsetX: number, offsetY: number) {
@@ -43,23 +109,23 @@ class Three {
       45,
       (window.innerWidth + this.offsetX) / (window.innerHeight + this.offsetY),
       1,
-      1000
+      100
     );
-    this.camera.position.set(2, 3, -6);
-    this.camera.lookAt(0, 1, 0);
+    this.camera.position.set(-1, 2, 3);
   }
 
   private setLight(): void {
     const hemiLight = new THREE.HemisphereLight(0xffffff, 0x444444);
     hemiLight.position.set(0, 20, 0);
     this.scene.add(hemiLight);
+
     const dirLight = new THREE.DirectionalLight(0xfffffff);
-    dirLight.position.set(-3, 10, -10);
+    dirLight.position.set(3, 10, 10);
     dirLight.castShadow = true;
-    dirLight.shadow.camera.top = 4;
-    dirLight.shadow.camera.bottom = -4;
-    dirLight.shadow.camera.left = -4;
-    dirLight.shadow.camera.right = 4;
+    dirLight.shadow.camera.top = 2;
+    dirLight.shadow.camera.bottom = -2;
+    dirLight.shadow.camera.left = -2;
+    dirLight.shadow.camera.right = 2;
     dirLight.shadow.camera.near = 0.1;
     dirLight.shadow.camera.far = 40;
     this.scene.add(dirLight);
@@ -67,7 +133,7 @@ class Three {
 
   private setMesh(): void {
     const mesh = new THREE.Mesh(
-      new THREE.PlaneGeometry(200, 200),
+      new THREE.PlaneGeometry(100, 100),
       new THREE.MeshPhongMaterial({
         color: 0x999999,
         depthWrite: false
@@ -80,36 +146,44 @@ class Three {
 
   private setLoader(): void {
     const loader = new GLTFLoader();
-    loader.load('./static/models/gltf/Soldier.glb', (gltf) => {
-      gltf.scene.traverse(function (object) {
+    loader.load('./static/models/gltf/Xbot.glb', (gltf) => {
+      const model = gltf.scene;
+      this.scene.add(model);
+
+      model.traverse(function (object) {
         if (object instanceof THREE.Mesh) {
           object.castShadow = true;
         }
       });
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      const model1 = SkeletonUtils.clone(gltf.scene);
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      const model2 = SkeletonUtils.clone(gltf.scene);
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      const model3 = SkeletonUtils.clone(gltf.scene);
 
-      const mixer1 = new THREE.AnimationMixer(model1);
-      const mixer2 = new THREE.AnimationMixer(model2);
-      const mixer3 = new THREE.AnimationMixer(model3);
+      const skeleton = new THREE.SkeletonHelper(model);
+      skeleton.visible = false;
+      this.scene.add(skeleton);
 
-      mixer1.clipAction(gltf.animations[0]).play();
-      mixer2.clipAction(gltf.animations[1]).play();
-      mixer3.clipAction(gltf.animations[2]).play();
+      const animations = gltf.animations;
+      this.mixer = new THREE.AnimationMixer(model);
+      this.numAnimations = animations.length;
 
-      model1.position.x = -2;
-      model2.position.x = 0;
-      model3.position.x = 2;
+      for (let i = 0; i < this.numAnimations; i++) {
+        let clip = animations[i];
+        const name = clip.name;
+        if (baseActions[name]) {
+          const action = this.mixer.clipAction(clip);
+          activateAction(action);
+          baseActions[name].action = action;
+        } else if (additiveActions[name]) {
+          THREE.AnimationUtils.makeClipAdditive(clip);
+          if (clip.name.endsWith('_pose')) {
+            clip = THREE.AnimationUtils.subclip(clip, clip.name, 2, 3, 30);
+          }
 
-      this.scene.add(model1, model2, model3);
-      this.mixers.push(mixer1, mixer2, mixer3);
+          const action = this.mixer.clipAction(clip);
+          activateAction(action);
+          additiveActions[name].action = action;
+          this.allActions.push(action);
+        }
+      }
+      createPanel();
 
       this.start();
     });
@@ -136,10 +210,14 @@ class Three {
 
   public start = (): void => {
     requestAnimationFrame(this.start);
-    const delta = this.clock.getDelta();
-    for (const mixer of this.mixers) {
-      mixer.update(delta);
+    for (let i = 0; i !== this.numAnimations; i++) {
+      const action = this.allActions[i];
+      const clip = action.getClip();
+      const settings = baseActions[clip.name] || additiveActions[clip.name];
+      settings.weight = action.getEffectiveWeight();
     }
+    const delta = this.clock.getDelta();
+    this.mixer.update(delta);
     this.render();
   };
 

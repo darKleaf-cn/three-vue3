@@ -116,7 +116,6 @@ class Three {
     window.removeEventListener('resize', this.onWindowResize);
     const arr = this.scene.children.filter((x) => x);
     arr.forEach((mesh: THREE.Object3D) => {
-      // console.log(mesh);
       if (mesh instanceof THREE.Mesh) {
         if (mesh.geometry) {
           mesh.geometry.dispose();
